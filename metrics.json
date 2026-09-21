@@ -1,0 +1,62 @@
+{
+  "model": "ignis-fire-footprint-forecaster",
+  "version": "1.0.0",
+  "task": "next-day fire-complex footprint probability field (segmentation) from prior-days detection density",
+  "data": "138,118 harmonized FIRMS detections (Amazon/Congo/Borneo, 2026-09-16..20, 5 sensors)",
+  "grid": "0.05 deg cells (~5.5 km)",
+  "features": [
+    "kde_0.10",
+    "kde_0.35",
+    "kde_0.80",
+    "frp_kde_0.35",
+    "kde_targetday_priorhr",
+    "kde_prevday",
+    "lon_n",
+    "lat_n",
+    "doy_sin",
+    "doy_cos"
+  ],
+  "labels": "cells inside DBSCAN complex hulls (app engine: scaled eps 0.12, minPts 6) of the target day",
+  "protocol": "train on target days 16-19, evaluate on 2026-09-20 (forward holdout); persistence baseline = prior-day density thresholded",
+  "logreg": {
+    "amazon": {
+      "iou": 0.575,
+      "precision": 0.634,
+      "recall": 0.86,
+      "persistence_baseline_iou": 0.355
+    },
+    "congo": {
+      "iou": 0.584,
+      "precision": 0.853,
+      "recall": 0.65,
+      "persistence_baseline_iou": 0.388
+    },
+    "borneo": {
+      "iou": 0.236,
+      "precision": 0.236,
+      "recall": 1.0,
+      "persistence_baseline_iou": 0.378
+    }
+  },
+  "hgb": {
+    "amazon": {
+      "iou": 0.657,
+      "precision": 0.828,
+      "recall": 0.76,
+      "persistence_baseline_iou": 0.355
+    },
+    "congo": {
+      "iou": 0.549,
+      "precision": 0.953,
+      "recall": 0.564,
+      "persistence_baseline_iou": 0.388
+    },
+    "borneo": {
+      "iou": 0.5,
+      "precision": 0.504,
+      "recall": 0.983,
+      "persistence_baseline_iou": 0.378
+    }
+  },
+  "caveat": "same-day-prior-hours density feature approximated with full-day prior-day KDEs; production wiring should use partial-day NRT feeds"
+}
